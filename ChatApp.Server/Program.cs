@@ -1,3 +1,5 @@
+using ChatApp.Core.Services;
+using ChatApp.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -25,6 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
    };
 });
 
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
 
 app.UseDefaultFiles();

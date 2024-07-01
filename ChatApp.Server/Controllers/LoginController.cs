@@ -1,4 +1,6 @@
-﻿using ChatApp.Domain.AuthorizeModels;
+﻿using ChatApp.Core.Services.Interfaces;
+using ChatApp.Domain.AuthorizeModels;
+using ChatApp.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,23 +16,38 @@ namespace ChatApp.Server.Controllers
    public class LoginController : ControllerBase
    {
       private readonly IConfiguration _config;
-      public LoginController(IConfiguration config)
+      private readonly IUserService _userService;
+      public LoginController(IConfiguration config, IUserService userService)
       {
          _config = config;
+         _userService = userService;
       }
 
       [AllowAnonymous]
       [HttpPost]
-      public ActionResult Login([FromBody] UserLogin userLogin)
+      public IActionResult Login([FromBody] UserLogin userLogin)
       {
          var user = Authenticate(userLogin);
          if (user != null)
          {
             var token = GenerateToken(user);
-            return Ok(token);
+            var objResponse = new UserSession { Username = user.Username.Trim(), Token = token };
+            return Ok(objResponse);
          }
 
          return NotFound("user not found");
+      }
+
+      [AllowAnonymous]
+      [HttpPost("register")]
+      public IActionResult Register([FromBody] UserLogin userLogin)
+      {
+         var objResult = _userService.Register(userLogin.Username, userLogin.Password);
+         if (objResult.result) 
+         {
+            return Ok();
+         }
+         return BadRequest(objResult.message);
       }
 
       // To generate token
@@ -40,8 +57,8 @@ namespace ChatApp.Server.Controllers
          var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
          var claims = new[]
          {
-                new Claim(ClaimTypes.NameIdentifier,user.Username),
-                new Claim(ClaimTypes.Role,user.Role)
+                new Claim(ClaimTypes.NameIdentifier,user.Username)
+                //new Claim(ClaimTypes.Role,user.Role)
             };
          var token = new JwtSecurityToken(_config["Jwt:Issuer"],
              _config["Jwt:Audience"],
@@ -57,13 +74,8 @@ namespace ChatApp.Server.Controllers
       //To authenticate user
       private UserModel Authenticate(UserLogin userLogin)
       {
-         var currentUser = UserConstants.Users.FirstOrDefault(x => x.Username.ToLower() ==
-             userLogin.Username.ToLower() && x.Password == userLogin.Password);
-         if (currentUser != null)
-         {
-            return currentUser;
-         }
-         return null;
+
+         return _userService.GetUserLogin(userLogin.Username, userLogin.Password);
       }
    }
 }
