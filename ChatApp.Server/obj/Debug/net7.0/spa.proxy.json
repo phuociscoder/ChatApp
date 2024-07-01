@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:5173",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Self-Study\\ChatApp\\ChatApp.Server\\..\\chatapp.client",
+"MaxTimeoutInSeconds": "120"
+}
+}
