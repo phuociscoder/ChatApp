@@ -31,7 +31,7 @@ namespace ChatApp.Server.Controllers
          if (user != null)
          {
             var token = GenerateToken(user);
-            var objResponse = new UserSession { Username = user.Username.Trim(), Token = token };
+            var objResponse = new UserSession { Username = user.Username.Trim(), Token = token, Id=user.Id };
             return Ok(objResponse);
          }
 

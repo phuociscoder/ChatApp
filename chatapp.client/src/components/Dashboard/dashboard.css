@@ -1,0 +1,50 @@
+.main-container{
+    background-color: lightgrey;
+    border-radius: 20px;
+    box-shadow: 5px 2px 5px lightgray;
+    height: 95vh;
+    padding: 30px;
+}
+
+.user-list-container{
+    background-color: white;
+    border-radius: 5px;
+    overflow-y: scroll;
+    position: relative;
+    height: 100%;
+
+}
+
+.info{
+    height: 80%;
+    position: relative;
+}
+
+.chat-session{
+    background-color: white;
+    border-radius: 5px;
+    overflow-y: auto;
+    border-right: solid 2px darkgray;
+}
+
+.chat-session{
+    background-color: white;
+    border-radius: 5px;
+    overflow-y: auto;
+    border-right: solid 2px darkgray;
+}
+
+.user{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: solid 1px gray;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px lightgray;
+}
+
+.user:hover {
+    background-color: cornflowerblue;
+    color: white;
+}
