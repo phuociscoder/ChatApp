@@ -4,6 +4,7 @@ import './dashboard.css'
 import { GetListUsers } from '../../services/userService';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { useNavigate } from "react-router-dom";
+import { SendInvitation } from '../../services/messageService';
 
 
 interface User {
@@ -18,13 +19,16 @@ function Dashboard(){
     const [conversations, setConversation] = useState<string[]>([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        GetUsers();
+        ConnectHub();
+    }, []);
+
+
 const GetUsers = () => {
     GetListUsers('/user/user-list').then(r => {
         SetUsers(r);
-        
-    }, e=> {
-
-    });
+    }, e=> {});
 }
 
 const ConnectHub =() => {
@@ -47,9 +51,15 @@ const UserElement = (model: User) => {
     return (
         <div className='w-100 p-3 mb-1 user'>
             <p>{model.username}</p>
-            <Button variant='primary'>Invite</Button>
+            <Button variant='primary' onClick={() => {SendInvite(model.username, localStorage.getItem("UserName")?.toString())}}>Invite</Button>
         </div>
     );
+}
+
+const SendInvite = async (receiver: string, requestor: string) => {
+    SendInvitation('/message/create-session', requestor, receiver).then(result => {
+         connection?.send("SendInvite", receiver, "");
+    }, error=> {});
 }
 
 const SendMessage = async() => {
@@ -58,10 +68,7 @@ const SendMessage = async() => {
     await connection?.send("SendMessage", name + '('+date.toLocaleString()+'): '+message);
 }
 
-    useEffect(() => {
-        GetUsers();
-        ConnectHub();
-    }, []);
+    
 
 
 const Logout =() => {
